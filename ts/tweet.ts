@@ -16,7 +16,7 @@ class Tweet {
             return 'achievement'
         if (this.text.startsWith('Just completed a') || this.text.startsWith('Just posted a'))
             return 'completed_event'
-        return 'misellaneous'
+        return 'miscellaneous'
     }
 
     //returns a boolean, whether the text includes any content written by the person tweeting.
