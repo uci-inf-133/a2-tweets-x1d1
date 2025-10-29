@@ -1,36 +1,75 @@
 function parseTweets(runkeeper_tweets) {
 	//Do not proceed if no tweets loaded
-	console.log('fghgfh')
 	if (runkeeper_tweets === undefined) {
 		window.alert('No tweets returned');
 		return;
 	}
 
 	const tweetsMap = [];
+
 	tweetCount = 0;
-	runkeeper_tweets
-		.map(tweet => new Tweet(tweet.text, tweet.created_at))
-		.forEach(element => {
+	writtenCompletedEventTweets = 0;
+	minDate = maxDate = null;
+
+	tweetsArray = runkeeper_tweets.map(tweet => new Tweet(tweet.text, tweet.created_at));
+	
+	tweetsArray.forEach(element => {
 			tweetCount += 1;
 			if (!tweetsMap[element.source]) {
 				tweetsMap[element.source] = [];
 			}
 			tweetsMap[element.source].push(element);
+
+			if (element.source == 'completed_event' && element.written)
+				writtenCompletedEventTweets++;
+
+			if (!minDate || element.time < minDate) minDate = element.time;
+			if (!maxDate || element.time > maxDate) maxDate = element.time;
 		});
 
-	//This line modifies the DOM, searching for the tag with the numberTweets ID and updating the text.
-	//It works correctly, your task is to update the text of the other tags in the HTML file!
+	tweetsArray.forEach(t => console.log(t.activityType))
+
+	document.getElementById('firstDate').innerText = minDate.toLocaleDateString("en-US", {
+		weekday: "long",
+		year: "numeric",
+		month: "long",
+		day: "numeric"
+	});
+
+	document.getElementById('lastDate').innerText = maxDate.toLocaleDateString("en-US", {
+		weekday: "long",
+		year: "numeric",
+		month: "long",
+		day: "numeric"
+	});
+
+	function calculatePercentageFromSource(source) {
+		return calculatePercentage(countTweetsFromSource(source), tweetCount);
+	}
+
+	function calculatePercentage(a, b) {
+		return ((a / b) * 100).toFixed(2) + '%'
+	}
+
+	function countTweetsFromSource(source) {
+		return tweetsMap[source].length;
+	}
+
 	document.getElementById('numberTweets').innerText = tweetCount;
-	document.querySelectorAll('.completedEvents').forEach(e => e.innerText = tweetsMap['completed_event'].length);
+	document.querySelectorAll('.completedEvents').forEach(e => e.innerText = countTweetsFromSource('completed_event'));
+	document.querySelector('.completedEventsPct').innerText = calculatePercentageFromSource('completed_event');
 
-	document.querySelector('.liveEvents').innerText = tweetsMap['live_event'].length;
+	document.querySelector('.liveEvents').innerText = countTweetsFromSource('live_event');
+	document.querySelector('.liveEventsPct').innerText = calculatePercentageFromSource('live_event');
 
-	document.querySelector('.achievements').innerText = tweetsMap['achievement'].length;
+	document.querySelector('.achievements').innerText = countTweetsFromSource('achievement');
+	document.querySelector('.achievementsPct').innerText = calculatePercentageFromSource('achievement');
 
-	document.querySelector('.miscellaneous').innerText = tweetsMap['miscellaneous'].length;
+	document.querySelector('.miscellaneous').innerText = countTweetsFromSource('miscellaneous');
+	document.querySelector('.miscellaneousPct').innerText = calculatePercentageFromSource('miscellaneous');
 
-
-
+	document.querySelector('.written').innerText = writtenCompletedEventTweets;
+	document.querySelector('.writtenPct').innerText = calculatePercentage(writtenCompletedEventTweets, countTweetsFromSource('completed_event'));
 }
 
 //Wait for the DOM to load
