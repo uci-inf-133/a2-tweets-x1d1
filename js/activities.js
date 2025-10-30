@@ -53,6 +53,7 @@ function parseTweets(runkeeper_tweets) {
 
     document.getElementById("longestActivityType").innerText = maxKey;
     document.getElementById("shortestActivityType").innerText = minKey;
+    // Determined through the Vega-Lite visualizations, the write-up said to just hard-code it.
     document.getElementById("weekdayOrWeekendLonger").innerText = "Saturday";
 
     activity_vis_spec = {
