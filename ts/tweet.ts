@@ -27,7 +27,6 @@ class Tweet {
 
     //returns a boolean, whether the text includes any content written by the person tweeting.
     get written(): boolean {
-        //TODO: identify whether the tweet is written
         return (
             this.text.includes(" - ") &&
             !this.text.includes("TomTom MySports Watch")
@@ -58,8 +57,6 @@ class Tweet {
             if (!/^[A-Za-z]+$/.test(words[i])) continue;
             return words[i];
         }
-
-        //TODO: parse the activity type from the text of the tweet
         return "unknown";
     }
 
